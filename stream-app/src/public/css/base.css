@@ -1,0 +1,57 @@
+/* === BASE === */
+:root{
+  --bg:#101114;--card:#181a1f;--text:#e8e6e3;--muted:#8b8d94;
+  --border:#2a2d37;--btn:#1e2025;--btn2:#25282e;
+  --bad:#f87171;--ok:#4ade80;--accent:#3b82f6;
+}
+*{box-sizing:border-box}
+html{height:100vh;overflow:hidden}
+body{height:100vh;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;background-image:url('/public/bg.jpg');background-size:cover;background-position:center;background-attachment:fixed}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.25)}
+
+a{color:#d4a574;text-decoration:none}
+a:hover{text-decoration:underline}
+
+.wrap{margin:0 auto;padding:0;width:100%}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.muted{color:var(--muted)}
+.inline{display:inline}
+.dn{display:none}
+.hidden{display:none !important}
+
+/* Form elements */
+label{display:block;margin-top:10px}
+input{
+  width:100%;padding:10px 12px;margin-top:8px;
+  border:1px solid rgba(255,255,255,.12);background:var(--bg);color:var(--text);
+  outline:none
+}
+input:focus{border-color:rgba(255,255,255,.25)}
+textarea{
+  width:100%;padding:10px 12px;margin-top:8px;
+  border:1px solid rgba(255,255,255,.12);background:var(--bg);color:var(--text);
+  outline:none;font-family:inherit
+}
+textarea:focus{border-color:rgba(255,255,255,.25)}
+button{
+  margin-top:12px;width:100%;padding:10px 14px;
+  border:1px solid rgba(255,255,255,.12);background:var(--btn);color:var(--text);
+  cursor:pointer
+}
+button:hover{background:var(--btn2)}
+
+/* Generic utility */
+.err{color:var(--bad);margin-top:10px}
+.sub{color:var(--muted);font-size:13px;margin-top:10px}
+.h{font-size:16px;font-weight:900;margin:0 0 8px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.box{flex:1;min-width:280px}
+.tag{margin-top:8px;font-size:12px}
+.ul{margin:8px 0 0 18px}
+video{width:100%;height:auto;background:#000;display:block}
+.status{padding:10px 12px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);white-space:pre-wrap;margin-top:12px;background:var(--bg)}

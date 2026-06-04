@@ -1,0 +1,1 @@
+ALTER TABLE voice_settings ADD COLUMN IF NOT EXISTS device_id VARCHAR(255) DEFAULT '';

@@ -1,0 +1,58 @@
+<%
+  const safeUser = (username || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const safeErr = (error || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const safeSiteName = (siteName || "Stream").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const csrfVal = (csrfToken || "");
+%>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#101114" />
+  <title>Вход — <%= safeSiteName %></title>
+  <link rel="manifest" href="/public/manifest.json" />
+  <link rel="icon" type="image/png" href="/public/logo.png" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#101114;color:#e8e6e3;display:flex;justify-content:center;align-items:center;min-height:100vh}
+    .auth-wrap{width:100%;padding:16px}
+    .auth-card{max-width:360px;margin:0 auto;background:#181a1f;border:1px solid #2a2d37;border-radius:8px;padding:24px;text-align:center}
+    .tb-logo{width:48px;height:48px;border-radius:8px;margin-bottom:12px}
+    .auth-title{font-size:18px;font-weight:700;margin-bottom:4px;color:#e8e6e3}
+    .auth-sub{font-size:14px;color:#8b8d94;margin-bottom:16px}
+    .auth-card input[type="text"],.auth-card input[type="password"]{width:100%;padding:10px 12px;margin-bottom:8px;border:1px solid #2a2d37;border-radius:4px;background:#0d0f13;color:#e8e6e3;font-size:14px;outline:none}
+    .auth-card input:focus{border-color:#60a5fa}
+    .auth-card button{width:100%;padding:10px;border:none;border-radius:4px;background:#3b82f6;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px}
+    .auth-card button:hover{background:#2563eb}
+    .check{display:flex;align-items:center;gap:8px;font-size:13px;color:#8b8d94;margin:12px 0 8px;cursor:pointer}
+    .check input{accent-color:#3b82f6}
+    .err{color:#f87171;font-size:13px;margin-bottom:8px}
+    .sub{font-size:13px;color:#8b8d94;margin-top:12px}
+    .sub a{color:#60a5fa;text-decoration:none}
+    .sub a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <img class="tb-logo" src="/public/logo.png" alt="Home" />
+      <h2 class="auth-title"><%= safeSiteName %></h2>
+      <h3 class="auth-sub">Вход</h3>
+      <form method="post" action="/login" autocomplete="on">
+        <input type="hidden" name="_csrf" value="<%= csrfVal %>"/>
+        <input type="text" name="username" placeholder="Логин" autocomplete="username" value="<%= safeUser %>" />
+        <input name="pass" type="password" placeholder="Пароль" autocomplete="current-password" />
+        <label class="check"><input type="checkbox" name="remember" value="1" /> Запомнить меня (30 дней)</label>
+        <button type="submit">Войти</button>
+      </form>
+      <% if (safeErr) { %>
+        <div class="err"><%= safeErr %></div>
+      <% } %>
+      <% if (registrationEnabled !== false) { %>
+        <div class="sub">Нет аккаунта? <a href="/register">Регистрация</a></div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

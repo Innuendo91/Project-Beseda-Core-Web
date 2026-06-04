@@ -1,0 +1,42 @@
+{
+  "name": "Stream.ShadeCraft.ru",
+  "short_name": "Stream",
+  "description": "Стримлерская — стримы, голосовые комнаты и чат",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#181512",
+  "theme_color": "#181512",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/public/pwa-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/pwa-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/pwa-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/public/pwa-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/public/pwa-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,478 @@
+.spa-root {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar-full {
+  flex-shrink: 0;
+}
+
+.spa-wrap {
+  flex: 1;
+  padding-top: 5px;
+  padding-left: 0;
+  padding-right: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.spa-nav .tb-btn.active,
+.spa-mobile-nav .tb-btn.active {
+  background: #b8860b;
+  border-color: #d4a017;
+  color: #fff;
+}
+
+.spa-mobile-nav {
+  display: none;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.spa-mobile-nav .tb-btn {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+.spa-summary {
+  display: grid;
+  grid-template-columns: 1fr 130px 130px 130px;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.spa-summary-card,
+.spa-stat-card {
+  min-height: 68px;
+}
+
+.spa-stat-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+}
+
+.spa-stat-card .mono {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.spa-home-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.spa-home {
+  flex: 1;
+  min-height: 0;
+}
+
+.spa-home-view :where(
+  .streams-header,
+  #streamsBlock,
+  .voice-header,
+  .voice-rooms-list,
+  .voice-create-card,
+  .stream-row .btn,
+  .browser-stream-btn button,
+  .voice-room-row .btn,
+  .chat-panel,
+  .panel,
+  .chat-tab,
+  .send input,
+  .send button,
+  .emojiPanel,
+  .emoji-grid button,
+  .sticker-grid-btn,
+  .chat-date-sep,
+  .drop-zone-overlay
+) {
+  border-radius: 0 !important;
+}
+
+.spa-voice-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  background: var(--card);
+  border-radius: 6px 6px 0 0;
+}
+
+.spa-voice-empty {
+  flex: 1;
+  margin-top: 0;
+  border-radius: 0 0 6px 6px;
+  justify-content: center;
+  min-height: 140px;
+}
+
+.spa-inline-btn {
+  width: auto;
+  margin: 14px auto 0;
+}
+
+.spa-chat-panel {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.spa-chat-panel .send input {
+  color: var(--muted);
+}
+
+.spa-chat-panel .tb-online-pill .mono {
+  width: auto;
+  min-width: 34px;
+  border-radius: 11px;
+  padding: 0 7px;
+}
+
+.spa-browser-status {
+  padding: 0 12px 10px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.spa-section-card {
+  max-width: 720px;
+}
+
+.spa-section-card .row .btn {
+  width: auto;
+  margin-top: 0;
+}
+
+.spa-admin-panel {
+  min-height: calc(100vh - 220px);
+}
+
+.spa-admin-panel.admin-panel-settings {
+  min-height: 0;
+}
+
+.spa-admin-panel .panel-head {
+  align-items: center;
+}
+
+.spa-admin-panel .panel-head .tb-btn,
+.spa-admin-panel .admin-actions > .btn,
+.spa-admin-panel .admin-link-box .btn {
+  width: auto;
+  margin-top: 0;
+}
+
+.spa-admin-panel .admin-tab-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.spa-admin-panel .admin-tab-btn:disabled:hover {
+  color: var(--muted);
+}
+
+.spa-admin-row {
+  align-items: flex-start;
+}
+
+.spa-admin-panel .admin-link-box {
+  margin-bottom: 10px;
+}
+
+.spa-admin-settings-form {
+  max-width: 860px;
+}
+
+.spa-admin-settings-form select.box {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 8px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+}
+
+.spa-admin-settings-form .row .btn {
+  width: auto;
+  margin-top: 0;
+}
+
+.spa-admin-chat-create {
+  margin-bottom: 10px;
+}
+
+.spa-admin-loading {
+  padding: 10px 0;
+}
+
+.spa-admin-panel .admin-chat-msglimit-input {
+  width: 58px;
+  padding: 3px 4px;
+  font-size: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text);
+  text-align: center;
+}
+
+.spa-admin-panel .admin-chat-bg-clear,
+.spa-admin-panel .admin-tab-color-apply,
+.spa-admin-panel .admin-tab-color-clear {
+  width: auto;
+  margin-top: 0;
+}
+
+.spa-voice-page .voice-page {
+  padding: 0;
+}
+
+.spa-voice-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  min-height: calc(100vh - 260px);
+}
+
+.spa-voice-list {
+  max-height: calc(100vh - 390px);
+}
+
+.spa-voice-room-panel {
+  min-height: 540px;
+}
+
+.spa-voice-room-panel .panel-head {
+  align-items: center;
+}
+
+.spa-voice-room-panel .btn-sm {
+  width: auto;
+  margin-top: 0;
+}
+
+.spa-voice-frame {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  background: var(--bg);
+}
+
+.spa-voice-placeholder {
+  flex: 1;
+  display: flex;
+  min-height: 360px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .spa-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .spa-voice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .spa-voice-list {
+    max-height: 320px;
+  }
+
+  .spa-voice-room-panel {
+    min-height: 540px;
+  }
+
+  .spa-admin-row,
+  .spa-admin-panel .admin-main,
+  .spa-admin-panel .admin-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .spa-admin-panel .admin-actions,
+  .spa-admin-panel .admin-form {
+    width: 100%;
+  }
+
+  .spa-admin-panel .admin-actions > .btn,
+  .spa-admin-panel .admin-form .btn {
+    width: 100%;
+  }
+
+  .spa-admin-panel .admin-chat-list {
+    grid-template-columns: 1fr;
+  }
+
+  .spa-admin-panel .admin-room-setting,
+  .spa-admin-panel .admin-setting-value {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .spa-wrap {
+    padding-top: 12px;
+  }
+
+  .spa-nav {
+    display: none;
+  }
+
+  .spa-mobile-nav {
+    display: flex;
+  }
+
+  .spa-summary {
+    gap: 8px;
+  }
+
+  .spa-summary-card,
+  .spa-stat-card {
+    min-height: 0;
+  }
+
+  .spa-stat-card {
+    align-items: flex-start;
+  }
+}
+
+.admin-stickers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.admin-sticker-card {
+  border: 1px solid #3a3f47;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1a1d21;
+}
+
+.admin-sticker-preview {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #121418;
+  padding: 8px;
+}
+
+.admin-sticker-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.admin-sticker-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  gap: 6px;
+}
+
+.admin-sticker-name {
+  font-size: 12px;
+  color: #aaa;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.admin-sticker-del {
+  padding: 3px 8px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.admin-sticker-upload-label {
+  cursor: pointer;
+  position: relative;
+}
+
+.admin-sticker-upload-label input {
+  display: none;
+}
+
+.spa-admin-panel .admin-notify-file-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(0,0,0,0.2);
+  font-size: 12px;
+  width: 160px;
+}
+
+.spa-admin-panel .admin-notify-file-name {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  color: var(--text);
+  min-height: 1.2em;
+}
+
+.spa-admin-panel .admin-notify-file-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.spa-admin-panel .admin-notify-file-play,
+.spa-admin-panel .admin-notify-file-del {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+}
+
+.spa-admin-panel .admin-notify-file-del:hover {
+  background: rgba(231,76,60,0.2);
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.spa-admin-panel .admin-notify-file-play:hover {
+  background: rgba(96,165,250,0.2);
+  color: #60a5fa;
+  border-color: #60a5fa;
+}

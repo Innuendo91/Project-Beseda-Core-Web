@@ -1,0 +1,80 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  postgres:
+    image: postgres:16-alpine
+    pull_policy: never
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: streamapp
+      POSTGRES_USER: streamapp
+      POSTGRES_PASSWORD: ${DB_PASS:?Run install.sh or set DB_PASS}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U streamapp -d streamapp"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  stream-app:
+    build: ./stream-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file: ./stream-app/.env
+    volumes:
+      - notify-sounds:/app/src/public/notify_sounds
+    ports:
+      - "127.0.0.1:8085:8085"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  voice-server:
+    build: ./voice-server
+    restart: unless-stopped
+    env_file: ./voice-server/.env
+    ports:
+      - "127.0.0.1:4001:4001"
+      - "40000-40100:40000-40100/udp"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  mediamtx:
+    image: bluenviron/mediamtx:1
+    pull_policy: never
+    restart: unless-stopped
+    volumes:
+      - ./mediamtx/mediamtx.yml:/mediamtx.yml:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+    environment:
+      - SSL_CERT_DIR=/etc/ssl/certs
+      - WEBSOCKET_SERVER_TRUSTED_CA=/etc/ssl/certs/ca-certificates.crt
+    ports:
+      - "8888-8890:8888-8890"
+      - "8888-8890:8888-8890/udp"
+      - "8189:8189/udp"
+      - "9997:9997"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  pgdata:
+  redisdata:
+  notify-sounds:

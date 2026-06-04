@@ -1,0 +1,59 @@
+logLevel: info
+logDestinations: [stdout]
+
+# оставим только нужное
+srt: yes
+srtAddress: :8890
+hls: no
+rtsp: no
+# OBS будет пушить сюда
+rtmp: no
+rtmpAddress: :1935
+
+# WebRTC просмотр из браузера
+webrtc: yes
+webrtcAddress: :8889
+# CORS: MediaMTX не подставляет env-переменные в YAML.
+# Запустите install.sh для автонастройки, или впишите домен вручную:
+# Для стриминга из браузера (WHIP) нужен * или конкретный домен:
+webrtcAllowOrigins: ["*"]
+# медиа-трафик WebRTC (UDP). Должен быть доступен зрителям.
+webrtcLocalUDPAddress: :8189
+
+# для локалки можно оставить так (берёт IP с интерфейсов)
+webrtcIPsFromInterfaces: yes
+webrtcAdditionalHosts: ["217.197.243.2"]
+
+webrtcEncryption: yes
+webrtcServerKey: /etc/letsencrypt/live/stream.shadecraft.ru/privkey.pem
+webrtcServerCert: /etc/letsencrypt/live/stream.shadecraft.ru/fullchain.pem
+
+#auth
+authMethod: http
+authHTTPAddress: "http://stream-app:8085/api/mediamtx/auth"
+
+#authMethod: internal
+#authInternalUsers:
+#  - user: viewer
+#    pass: viewerpass
+#    permissions:
+#      - action: read
+#  - user: streamer
+#    pass: test123
+#    permissions:
+#      - action: publish
+#  - user: api
+#    pass: perepere5015
+#    permissions:
+#      - action: api
+
+# по умолчанию разрешено всем (internal auth user:any), это ок для локалки.
+# если будешь открывать в интернет — лучше включить auth / ограничить IP.
+
+api: yes
+apiAddress: :9997
+
+paths:
+  "~^live/":
+    source: publisher
+    srtPublishPassphrase: ""
