@@ -199,7 +199,7 @@ rtmpAddress: :1935
 # WebRTC playback from browser
 webrtc: yes
 webrtcAddress: :8889
-webrtcAllowOrigins: ["https://${DOMAIN}"]
+webrtcAllowOrigins: ["*"]
 webrtcLocalUDPAddress: :8189
 
 # WebRTC ICE
@@ -244,7 +244,6 @@ services:
 
   postgres:
     image: postgres:16-alpine
-    pull_policy: never
     restart: unless-stopped
     environment:
       POSTGRES_DB: streamapp
@@ -289,7 +288,6 @@ services:
 
   mediamtx:
     image: bluenviron/mediamtx:1
-    pull_policy: never
     restart: unless-stopped
     volumes:
       - ./mediamtx/mediamtx.yml:/mediamtx.yml:ro
