@@ -48,9 +48,11 @@ info "Создание конфига nginx для ${DOMAIN}..."
 CLEANED="${DOMAIN//[^.]}"
 if [[ ${#CLEANED} -ge 2 ]]; then
   SERVER_NAME="${DOMAIN}"
+  CERTBOT_DOMAINS="${DOMAIN}"
   HTTP_HOST_CHECK="if (\$host = ${DOMAIN}) { return 301 https://\$host\$request_uri; } # managed by Certbot"
 else
   SERVER_NAME="${DOMAIN} www.${DOMAIN}"
+  CERTBOT_DOMAINS="${DOMAIN} www.${DOMAIN}"
   HTTP_HOST_CHECK="if (\$host = ${DOMAIN}) { return 301 https://\$host\$request_uri; } # managed by Certbot
     if (\$host = www.${DOMAIN}) { return 301 https://\$host\$request_uri; } # managed by Certbot"
 fi
