@@ -73,6 +73,7 @@ export function startWsServer({ server }) {
             peerId,
             userId: Number(String(payload.sub).split(":")[1] || 0),
             username: payload.username,
+            displayName: payload.displayName || "",
             ws
           });
 
@@ -82,7 +83,7 @@ export function startWsServer({ server }) {
             peers: room.getPeersSnapshot()
           });
 
-          room.broadcast("peerJoined", { peerId, username: peer.username }, peerId);
+          room.broadcast("peerJoined", { peerId, username: peer.username, displayName: peer.displayName }, peerId);
           return;
         }
 

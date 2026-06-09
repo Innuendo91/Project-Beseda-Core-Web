@@ -47,6 +47,12 @@ export function forceLogoutUser(userId, reason = "user_deleted") {
   }
 }
 
+function broadcastPresenceAll() {
+  for (const room of roomMembers.keys()) {
+    broadcastPresence(room);
+  }
+}
+
 export function incPresence(ws) {
   const uid = Number(ws.user?.id || 0);
   if (!uid) return;
@@ -74,6 +80,8 @@ export function incPresence(ws) {
     roomMembers.set(room, rm);
   }
   rm.set(uid, (rm.get(uid) || 0) + 1);
+
+  broadcastPresenceAll();
 }
 
 export function decPresence(ws) {
@@ -84,7 +92,6 @@ export function decPresence(ws) {
   if (cur) {
     cur.conns -= 1;
     if (cur.conns <= 0) onlineByUserId.delete(uid);
-    else onlineByUserId.set(uid, cur);
   }
 
   const room = ws.room || "global";
@@ -95,6 +102,8 @@ export function decPresence(ws) {
     else rm.set(uid, c);
     if (rm.size === 0) roomMembers.delete(room);
   }
+
+  broadcastPresenceAll();
 }
 
 export function presenceSnapshotForRoom(room) {

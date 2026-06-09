@@ -101,10 +101,11 @@ const chatTabs = computed(() => [
 ]);
 
 const streamTabs = computed(() =>
-  props.streams.map((path) => ({
-    path,
-    name: path.replace(/^live\//, ""),
-  }))
+  props.streams.map((s) => {
+    const path = typeof s === "string" ? s : s.path;
+    const name = typeof s === "object" && s.displayName ? s.displayName : path.replace(/^live\//, "");
+    return { path, name };
+  })
 );
 
 const dmTabs = computed(() =>
@@ -198,6 +199,8 @@ function onInputUpdate(e) {
 const imageInputRef = ref(null);
 const previewImage = ref("");
 const showPreview = ref(false);
+const isDragging = ref(false);
+let dragCounter = 0;
 
 function triggerImageUpload() {
   imageInputRef.value?.click();
@@ -291,6 +294,14 @@ function onTabClick(slug) {
     emit("switchRoom", slug);
   }
 }
+
+function resolveUser(nick) {
+  if (!nick) return null;
+  const n = nick.toLowerCase();
+  let u = props.chatOnlineUsers.find((user) => (user.username || "").toLowerCase() === n);
+  if (!u) u = props.chatAllUsers.find((user) => (user.username || "").toLowerCase() === n);
+  return u;
+}
 </script>
 
 <template>
@@ -377,15 +388,15 @@ function onTabClick(slug) {
               ref="streamChatLogEl"
               class="chatLog"
             >
-              <div v-if="!activeStreamChatMessages.length" class="chat-date-sep">Сообщений пока нет</div>
-              <div
-                v-for="message in activeStreamChatMessages"
-                :key="message.id || `${message.nick}-${message.ts}-${message.text}`"
-                class="chat-msg"
-                :class="{ 'chat-msg-sticker': !!message.stickerData }"
-              >
-                <img :src="message.avatar || DEFAULT_AVATAR" class="chat-avatar" alt="" />
-                <span class="chat-nick" :style="{ color: message.nickColor || '#60a5fa' }">{{ message.nick }}:</span>
+           <div v-if="!activeStreamChatMessages.length" class="chat-date-sep">Сообщений пока нет</div>
+               <div
+                 v-for="message in activeStreamChatMessages"
+                 :key="message.id || `${message.nick}-${message.ts}-${message.text}`"
+                 class="chat-msg"
+                 :class="{ 'chat-msg-sticker': !!message.stickerData }"
+               >
+                 <img :src="resolveUser(message.nick)?.avatar || message.avatar || DEFAULT_AVATAR" class="chat-avatar" alt="" />
+                 <span class="chat-nick" :style="{ color: resolveUser(message.nick)?.nickColor || message.nickColor || '#60a5fa' }">{{ resolveUser(message.nick)?.displayName || message.nick }}:</span>
                 <img
                   v-if="message.stickerData"
                   class="chat-sticker-img chat-sticker-img-inline"
@@ -442,7 +453,7 @@ function onTabClick(slug) {
                 </div>
               </div>
              <input type="file" ref="imageInputRef" accept="image/*" style="display:none" @change="onImageSelected" />
-              <div class="send">
+              <div class="send send-form-web">
                   <button type="button" title="Emoji" @click="emit('toggleEmoji')">😀</button>
                   <button type="button" title="Sticker" @click="emit('toggleSticker')">🎭</button>
                   <button type="button" title="Картинка" @click="triggerImageUpload">🖼️</button>
@@ -465,15 +476,15 @@ function onTabClick(slug) {
               :style="activeChatStyle"
             >
               <div v-if="chatStatus" class="chat-date-sep">{{ chatStatus }}</div>
-              <div v-if="!activeChatMessages.length && !chatStatus" class="chat-date-sep">Сообщений пока нет</div>
-              <div
-                v-for="message in activeChatMessages"
-                :key="message.id || `${message.nick}-${message.ts}-${message.text}`"
-                class="chat-msg"
-                :class="{ 'chat-msg-sticker': !!message.stickerData }"
-              >
-                <img :src="message.avatar || DEFAULT_AVATAR" class="chat-avatar" alt="" />
-                <span class="chat-nick" :style="{ color: message.nickColor || '#60a5fa' }">{{ message.nick }}:</span>
+          <div v-if="!activeChatMessages.length && !chatStatus" class="chat-date-sep">Сообщений пока нет</div>
+               <div
+                 v-for="message in activeChatMessages"
+                 :key="message.id || `${message.nick}-${message.ts}-${message.text}`"
+                 class="chat-msg"
+                 :class="{ 'chat-msg-sticker': !!message.stickerData }"
+               >
+                 <img :src="resolveUser(message.nick)?.avatar || message.avatar || DEFAULT_AVATAR" class="chat-avatar" alt="" />
+                 <span class="chat-nick" :style="{ color: resolveUser(message.nick)?.nickColor || message.nickColor || '#60a5fa' }">{{ resolveUser(message.nick)?.displayName || message.nick }}:</span>
                 <img
                   v-if="message.stickerData"
                   class="chat-sticker-img chat-sticker-img-inline"
@@ -530,7 +541,7 @@ function onTabClick(slug) {
                 </div>
               </div>
              <input type="file" ref="imageInputRef" accept="image/*" style="display:none" @change="onImageSelected" />
-              <div class="send">
+              <div class="send send-form-web">
                   <button type="button" title="Emoji" @click="emit('toggleEmoji')">😀</button>
                   <button type="button" title="Sticker" @click="emit('toggleSticker')">🎭</button>
                   <button type="button" title="Картинка" @click="triggerImageUpload">🖼️</button>
@@ -561,7 +572,7 @@ function onTabClick(slug) {
                     class="chat-avatar-sm"
                     alt=""
                   />
-                  <span :style="{ color: user.nickColor || '#60a5fa' }">{{ user.username }}</span>
+                  <span :style="{ color: user.nickColor || '#60a5fa' }">{{ user.displayName || user.username }}</span>
                   <span v-if="onlineUsernames.has(user.username)" class="user-online-dot"></span>
                 </div>
               </div>
@@ -575,7 +586,7 @@ function onTabClick(slug) {
             :style="{ top: userMenuPos.top + 'px', left: userMenuPos.left + 'px' }"
             @click.stop
           >
-            <button type="button" class="user-dropdown-item" @click="emit('mentionUser', activeUserMenu.username); closeUserMenu()">
+            <button type="button" class="user-dropdown-item" @click="emit('mentionUser', activeUserMenu); closeUserMenu()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a6 6 0 0 0-6-6h-1a9 9 0 0 0-9 9v2"/></svg>
               Упомянуть
             </button>
@@ -598,9 +609,9 @@ function onTabClick(slug) {
       </div>
 
       <!-- User profile modal -->
-      <div v-if="selectedProfileUser" class="image-preview-overlay" @click.self="closeUserProfile">
-        <div class="image-preview-close" @click="closeUserProfile">&times;</div>
+      <div v-if="selectedProfileUser" class="user-profile-overlay" @click.self="closeUserProfile">
         <div class="user-profile-card">
+          <div class="user-profile-close" @click="closeUserProfile">&times;</div>
           <img :src="selectedProfileUser.avatar || DEFAULT_AVATAR" class="user-profile-avatar" alt="" />
           <div class="user-profile-name" :style="{ color: selectedProfileUser.nickColor || '#60a5fa' }">
             {{ selectedProfileUser.displayName || selectedProfileUser.username }}
@@ -781,6 +792,17 @@ function onTabClick(slug) {
   transform: scale(1.1);
 }
 
+.user-profile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 40px;
+}
+
 .user-profile-card {
   background: #1e1a17;
   border-radius: 12px;
@@ -789,21 +811,39 @@ function onTabClick(slug) {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  min-width: 280px;
-  max-width: 400px;
+  min-width: 300px;
+  max-width: 380px;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.user-profile-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: 22px;
+  color: var(--muted, #8b8078);
+  cursor: pointer;
+  line-height: 1;
+  user-select: none;
+  transition: color 0.15s;
+}
+
+.user-profile-close:hover {
+  color: #f87171;
 }
 
 .user-profile-avatar {
-  width: 96px;
-  height: 96px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid rgba(255, 255, 255, 0.1);
 }
 
 .user-profile-name {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -817,7 +857,7 @@ function onTabClick(slug) {
   font-size: 14px;
   text-align: center;
   line-height: 1.5;
-  max-width: 320px;
+  max-width: 300px;
   word-break: break-word;
 }
 

@@ -12,9 +12,11 @@ CREATE TABLE IF NOT EXISTS users (
   display_name VARCHAR(64) DEFAULT '',
   avatar TEXT DEFAULT '',
   nick_color VARCHAR(7) DEFAULT '#60a5fa',
-  bio VARCHAR(500) DEFAULT ''
+  bio VARCHAR(500) DEFAULT '',
+  email TEXT DEFAULT NULL
 );
 ALTER TABLE users ADD COLUMN IF NOT EXISTS chat_muted BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email) WHERE email IS NOT NULL;
 
 -- messages
 CREATE TABLE IF NOT EXISTS messages (

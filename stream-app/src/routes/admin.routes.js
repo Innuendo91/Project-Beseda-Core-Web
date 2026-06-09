@@ -39,13 +39,14 @@ adminRouter.get("/admin", requireAdmin, (req, res) => {
 adminRouter.get("/api/admin/users", requireAdmin, async (req, res) => {
   try {
     const { rows } = await pool.query(
-      "SELECT id, username, created_ts, last_login_ts, is_admin, chat_muted FROM users ORDER BY id DESC"
+      "SELECT id, username, email, created_ts, last_login_ts, is_admin, chat_muted FROM users ORDER BY id DESC"
     );
     return res.json({
       ok: true,
       users: rows.map((u) => ({
         id: typeof u.id === 'bigint' ? Number(u.id) : Number(u.id),
         username: u.username,
+        email: u.email || "",
         createdAt: formatTs(u.created_ts),
         lastLoginAt: formatTs(u.last_login_ts),
         isAdmin: !!u.is_admin,
@@ -53,6 +54,25 @@ adminRouter.get("/api/admin/users", requireAdmin, async (req, res) => {
       })),
     });
   } catch {
+    return res.status(500).json({ ok: false, error: "db error" });
+  }
+});
+
+adminRouter.patch("/api/admin/users/:id/email", requireAdmin, async (req, res) => {
+  const userId = Number(req.params.id || 0);
+  if (!userId) return res.status(400).json({ ok: false, error: "bad user" });
+
+  const email = String(req.body?.email || "").trim().toLowerCase();
+  if (email && email.length > 255) {
+    return res.status(400).json({ ok: false, error: "Email слишком длинный" });
+  }
+
+  try {
+    const { rowCount } = await pool.query("UPDATE users SET email=$1 WHERE id=$2", [email || null, userId]);
+    if (rowCount === 0) return res.status(404).json({ ok: false, error: "user not found" });
+    return res.json({ ok: true, email: email || "" });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ ok: false, error: "Этот e-mail уже занят" });
     return res.status(500).json({ ok: false, error: "db error" });
   }
 });

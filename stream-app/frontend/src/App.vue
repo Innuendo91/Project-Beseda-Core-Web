@@ -1,65 +1,79 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import {
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+} from "reka-ui";
 import { useUser } from "./composables/useUser.js";
 import HomeView from "./views/HomeView.vue";
 import ProfileView from "./views/ProfileView.vue";
 import AdminView from "./views/AdminView.vue";
 
-const { user, isAdmin, siteName, siteSubtitle, displayName, logout } = useUser();
+const { isAdmin, siteName, siteSubtitle, displayName, logout } = useUser();
 
 const activePanel = ref("home");
+const profileOpen = ref(false);
+const adminOpen = ref(false);
 
 const panels = computed(() => [
-  { id: "home", label: "Обзор" },
+  { id: "home", label: "Главная" },
   { id: "profile", label: "Профиль" },
   ...(isAdmin.value ? [{ id: "admin", label: "Админ" }] : []),
 ]);
 
-function handleSiteNameUpdate(settings) {
-   if (settings?.siteName) {
-     siteName.value = settings.siteName;
-   }
-   if (settings?.siteSubtitle !== undefined) {
-     siteSubtitle.value = settings.siteSubtitle;
-   }
- }
+function openPanel(panelId) {
+  if (panelId === "profile") {
+    profileOpen.value = true;
+    return;
+  }
+  if (panelId === "admin") {
+    adminOpen.value = true;
+    return;
+  }
+  activePanel.value = panelId;
+}
 
-onMounted(() => {
-});
+function handleSiteNameUpdate(settings) {
+  if (settings?.siteName) {
+    siteName.value = settings.siteName;
+  }
+  if (settings?.siteSubtitle !== undefined) {
+    siteSubtitle.value = settings.siteSubtitle;
+  }
+}
+
+onMounted(() => {});
 </script>
 
 <template>
   <div class="spa-root">
-    <div class="toolbar toolbar-full">
-      <div class="toolbar-inner">
-        <div class="tb-left">
-          <a class="tb-logo-link" @click="activePanel = 'home'">
-            <img class="tb-logo" :src="'/public/logo.png'" alt="Home" />
-          </a>
-          <div class="tb-text">
-            <div class="tb-title">{{ siteName }}</div>
-            <div v-if="siteSubtitle" class="tb-sub">{{ siteSubtitle }}</div>
-          </div>
-        </div>
+    <header class="spa-header">
+      <div class="spa-header-brand">
+        <button type="button" class="spa-logo-btn" @click="activePanel = 'home'">
+          <span class="spa-logo-text">{{ siteName }}</span>
+        </button>
+        <div v-if="siteSubtitle" class="spa-header-subtitle">{{ siteSubtitle }}</div>
+      </div>
 
-        <div class="tb-right">
-          <div class="tb-pill tb-user-pill">{{ displayName }}</div>
-          <div class="tb-desktop-btns spa-nav">
-            <button
-              v-for="panel in panels"
-              :key="panel.id"
-              type="button"
-              class="tb-btn tb-link"
-              :class="{ active: activePanel === panel.id }"
-              @click="activePanel = panel.id"
-            >
-              {{ panel.label }}
-            </button>
-            <button type="button" class="tb-btn" @click="logout">Выйти</button>
-          </div>
+      <div class="spa-header-actions">
+        <div class="spa-user-name">{{ displayName }}</div>
+        <div class="spa-nav">
+          <button
+            v-for="panel in panels"
+            :key="panel.id"
+            type="button"
+            class="spa-nav-btn"
+            :class="{ active: activePanel === panel.id && panel.id !== 'profile' }"
+            @click="openPanel(panel.id)"
+          >
+            {{ panel.label }}
+          </button>
+          <button type="button" class="spa-nav-btn" @click="logout">Выйти</button>
         </div>
       </div>
-    </div>
+    </header>
 
     <div class="wrap spa-wrap">
       <div class="spa-mobile-nav">
@@ -67,9 +81,9 @@ onMounted(() => {
           v-for="panel in panels"
           :key="panel.id"
           type="button"
-          class="tb-btn"
-          :class="{ active: activePanel === panel.id }"
-          @click="activePanel = panel.id"
+          class="spa-nav-btn"
+          :class="{ active: activePanel === panel.id && panel.id !== 'profile' }"
+          @click="openPanel(panel.id)"
         >
           {{ panel.label }}
         </button>
@@ -80,12 +94,30 @@ onMounted(() => {
         :is-admin="isAdmin"
       />
 
-      <ProfileView v-else-if="activePanel === 'profile'" />
-
-      <AdminView
-        v-else-if="activePanel === 'admin' && isAdmin"
-        :on-update-site-name="handleSiteNameUpdate"
-      />
     </div>
+
+    <DialogRoot v-model:open="profileOpen">
+      <DialogPortal>
+        <DialogOverlay class="profile-modal-overlay" />
+        <DialogContent class="profile-modal-card">
+          <ProfileView @close="profileOpen = false" />
+        </DialogContent>
+      </DialogPortal>
+    </DialogRoot>
+
+    <DialogRoot v-model:open="adminOpen">
+      <DialogPortal>
+        <DialogOverlay class="admin-modal-overlay" />
+        <DialogContent class="admin-modal-card">
+          <button type="button" class="admin-modal-close" aria-label="Закрыть" @click="adminOpen = false">
+            ×
+          </button>
+          <AdminView
+            v-if="isAdmin"
+            :on-update-site-name="handleSiteNameUpdate"
+          />
+        </DialogContent>
+      </DialogPortal>
+    </DialogRoot>
   </div>
 </template>

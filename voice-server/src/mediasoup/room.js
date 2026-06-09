@@ -25,9 +25,9 @@ export class Room {
     return new Room(slug, router, isPermanent);
   }
 
-  createPeer({ peerId, userId, username, ws }) {
+  createPeer({ peerId, userId, username, displayName, ws }) {
     this.cancelCleanupTimer();
-    const peer = new Peer({ peerId, userId, username, ws, room: this });
+    const peer = new Peer({ peerId, userId, username, displayName, ws, room: this });
     this.peers.set(peerId, peer);
     return peer;
   }
@@ -104,6 +104,7 @@ export class Room {
       peerId: p.peerId,
       userId: p.userId,
       username: p.username,
+      displayName: p.displayName || "",
       producers: [...p.producers.keys()]
     }));
   }

@@ -75,7 +75,7 @@ const placeholders = Array.from({ length: mentionedNames.size }, (_, i) => `$${i
         FROM push_subscriptions ps
         JOIN users u ON ps.user_id = u.id
         JOIN voice_settings vs ON ps.user_id = vs.user_id
-        WHERE ps.room=$1 AND u.username IN (${placeholders}) AND ps.user_id!=$2 AND vs.push_enabled = TRUE`,
+        WHERE ps.room=$1 AND (COALESCE(NULLIF(u.display_name, ''), u.username)) IN (${placeholders}) AND ps.user_id!=$2 AND vs.push_enabled = TRUE`,
       [room, senderId, ...mentionedNames]
     );
     for (const row of rows) {

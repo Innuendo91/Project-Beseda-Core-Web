@@ -81,7 +81,7 @@ router.post("/api/mediamtx/auth", async (req, res) => {
     if (!userId && user && password) {
       try {
         const { rows } = await pool.query(
-          "SELECT id, pass_hash, publish_token FROM users WHERE username = $1 LIMIT 1",
+          "SELECT id, pass_hash, publish_token FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1",
           [user]
         );
         const row = rows?.[0];

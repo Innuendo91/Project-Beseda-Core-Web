@@ -67,8 +67,8 @@ let chatAuxInterval = null;
 let voiceRefreshInterval = null;
 let streamsRefreshInterval = null;
 
-async function refresh() {
-  loading.value = true;
+async function refresh({ quiet } = {}) {
+  if (!quiet) loading.value = true;
   status.value = "";
   try {
     const [me, streamData, roomData] = await Promise.all([
@@ -87,7 +87,7 @@ async function refresh() {
     }
     status.value = "Не удалось обновить данные";
   } finally {
-    loading.value = false;
+    if (!quiet) loading.value = false;
   }
 }
 
@@ -123,7 +123,8 @@ function handleSendMessage() {
 }
 
 function handleMentionUser(username) {
-  chatInput.value = `${chatInput.value}@${username} `;
+  const name = username.displayName || username.username || username;
+  chatInput.value = `${chatInput.value}@${name} `;
 }
 
 async function handleOpenDm(user) {
@@ -232,13 +233,13 @@ onMounted(async () => {
   refreshVoiceRooms({ quiet: true });
   loadChatAux();
   loadNotifySounds();
-  loadChatNotifSettings(currentUser.value?.username || "");
+  loadChatNotifSettings(currentUser.value?.username || "", currentUser.value?.displayName || "");
   connectChatRoom("global");
   setActiveRoom("global");
 
   voiceRefreshInterval = window.setInterval(() => refreshVoiceRooms({ quiet: true }), 6000);
   chatAuxInterval = window.setInterval(loadChatAux, 30000);
-  streamsRefreshInterval = window.setInterval(refresh, 10000);
+  streamsRefreshInterval = window.setInterval(() => refresh({ quiet: true }), 10000);
 });
 
 onUnmounted(() => {
@@ -253,8 +254,8 @@ onUnmounted(() => {
     <div v-if="status" class="status">{{ status }}</div>
 
     <div class="home-split spa-home">
-      <div class="home-left">
-        <div class="streams-body">
+      <aside class="home-left streams-panel-web">
+        <section class="streams-body panel-section-web">
           <StreamList
             :streams="streams"
             :loading="loading"
@@ -264,9 +265,9 @@ onUnmounted(() => {
             @toggle-browser-stream="toggleBrowserStream"
           />
           <div v-if="browserStreamStatus" class="spa-browser-status">{{ browserStreamStatus }}</div>
-        </div>
+        </section>
 
-        <div class="voice-body">
+        <section class="voice-body panel-section-web">
           <VoiceRoomList
             :voice-rooms="voiceRooms"
             :voice-loading="voiceLoading"
@@ -280,8 +281,8 @@ onUnmounted(() => {
             @create="handleCreateVoiceRoom"
             @close-room="closeVoiceRoom"
           />
-        </div>
-      </div>
+        </section>
+      </aside>
 
       <div class="home-right">
        <ChatPanel

@@ -201,16 +201,16 @@ attachDesktopRemotePlayWss(server);
   if (!adminUser || !adminPass) return;
   try {
     const { pool } = await import("./db.js");
-    const existing = await pool.query("SELECT id FROM users WHERE username=$1 LIMIT 1", [adminUser]);
+    const existing = await pool.query("SELECT id FROM users WHERE LOWER(username)=LOWER($1) LIMIT 1", [adminUser]);
     if (existing.rows.length > 0) {
       console.log(`[bootstrap] admin user "${adminUser}" already exists, updating is_admin`);
-      await pool.query("UPDATE users SET is_admin=TRUE WHERE username=$1", [adminUser]);
+      await pool.query("UPDATE users SET is_admin=TRUE WHERE LOWER(username)=LOWER($1)", [adminUser]);
     } else {
       const hash = await bcrypt.hash(adminPass, 12);
       const ts = Math.floor(Date.now() / 1000);
       await pool.query(
-        "INSERT INTO users(username, pass_hash, created_ts, is_admin) VALUES ($1, $2, $3, TRUE)",
-        [adminUser, hash, ts]
+        "INSERT INTO users(username, display_name, pass_hash, created_ts, is_admin) VALUES ($1, $2, $3, $4, TRUE)",
+        [adminUser.toLowerCase(), adminUser, hash, ts]
       );
       console.log(`[bootstrap] admin user "${adminUser}" created`);
     }

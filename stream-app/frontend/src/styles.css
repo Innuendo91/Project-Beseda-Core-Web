@@ -85,16 +85,10 @@
   .voice-rooms-list,
   .voice-create-card,
   .stream-row .btn,
-  .browser-stream-btn button,
   .voice-room-row .btn,
   .chat-panel,
   .panel,
-  .chat-tab,
   .send input,
-  .send button,
-  .emojiPanel,
-  .emoji-grid button,
-  .sticker-grid-btn,
   .chat-date-sep,
   .drop-zone-overlay
 ) {
@@ -475,4 +469,684 @@
   background: rgba(96,165,250,0.2);
   color: #60a5fa;
   border-color: #60a5fa;
+}
+
+.profile-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 24px;
+}
+
+.profile-modal-card {
+  width: 100%;
+  max-width: 640px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--card, #1e2227);
+  border: 1px solid var(--border, rgba(255,255,255,0.08));
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.profile-modal-card .profile-panel {
+  min-height: auto;
+}
+
+/* Desktop-client inspired SPA shell */
+.spa-root {
+  background: var(--bg);
+}
+
+.spa-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 47px;
+  padding: 8px 12px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.spa-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.spa-logo-btn {
+  width: auto;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.spa-logo-btn:hover {
+  background: transparent;
+}
+
+.spa-logo-text {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 3px 10px;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--bg);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.spa-header-subtitle {
+  max-width: 360px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spa-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.spa-user-name {
+  max-width: 160px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spa-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spa-nav-btn {
+  width: auto;
+  height: 30px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--btn);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.spa-nav-btn:hover,
+.spa-nav-btn.active {
+  background: var(--btn2);
+  border-color: rgba(59, 130, 246, 0.55);
+  color: var(--text);
+}
+
+.spa-wrap {
+  padding-top: 0;
+}
+
+.spa-mobile-nav {
+  padding: 8px;
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+
+.spa-home-view {
+  background: var(--bg);
+}
+
+.home-split {
+  display: flex !important;
+  gap: 0 !important;
+  overflow: hidden;
+}
+
+.streams-panel-web {
+  width: 220px;
+  min-width: 220px;
+  gap: 0 !important;
+  overflow: hidden;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+}
+
+.panel-section-web {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.streams-panel-web .streams-body {
+  flex: 0.85 1 0 !important;
+}
+
+.streams-panel-web .voice-body {
+  flex: 1.15 1 0 !important;
+  border-top: 1px solid var(--border);
+}
+
+.stream-list-panel,
+.voice-list-panel,
+#streamsBlock,
+#voiceRoomsBlock {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  border-radius: 0;
+  background: transparent;
+}
+
+.panel-header-web {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  height: 34px;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: rgba(59, 130, 246, 0.08) !important;
+  flex-shrink: 0;
+}
+
+.panel-title-web {
+  min-width: 0;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.panel-count-web {
+  min-width: 22px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--btn);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+
+#streamsGrid,
+.voice-rooms-list {
+  flex: 1;
+  min-height: 0;
+  padding: 6px;
+  overflow-y: auto;
+}
+
+.stream-item-web,
+.voice-item-web {
+  width: 100%;
+  min-height: 38px;
+  margin: 0;
+  padding: 7px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+}
+
+.stream-item-web:hover,
+.voice-item-web:hover {
+  background: var(--btn);
+}
+
+.stream-thumb-web {
+  width: 40px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 3px;
+  background: var(--bg);
+}
+
+.live-badge-web {
+  padding: 2px 5px;
+  border-radius: 2px;
+  background: var(--bad);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.stream-item-web .stream-name,
+.voice-item-web .voice-room-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.voice-item-left-web {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.voice-icon-web {
+  flex: 0 0 auto;
+  font-size: 13px;
+}
+
+.voice-item-info-web {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.voice-room-meta {
+  max-width: 135px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.voice-room-peers {
+  min-width: 18px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--btn);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.voice-room-peers--online {
+  color: var(--ok);
+}
+
+.browser-stream-btn,
+.voice-create-card {
+  padding: 6px 8px 10px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.start-stream-btn-web {
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  padding: 0 8px;
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  border-radius: 3px;
+  background: rgba(59, 130, 246, 0.16);
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.start-stream-btn-web:hover {
+  background: rgba(59, 130, 246, 0.28);
+  color: #fff;
+}
+
+.start-stream-btn-web.streaming {
+  border-color: rgba(248, 113, 113, 0.55);
+  background: rgba(248, 113, 113, 0.14);
+  color: var(--bad);
+}
+
+.browser-stream-btn .start-stream-btn-web,
+.voice-create-card .start-stream-btn-web {
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  padding: 0 8px;
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  border-radius: 3px;
+  background: rgba(59, 130, 246, 0.16);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.browser-stream-btn .start-stream-btn-web:hover,
+.voice-create-card .start-stream-btn-web:hover {
+  background: rgba(59, 130, 246, 0.28);
+  color: #fff;
+}
+
+.browser-stream-btn .start-stream-btn-web.streaming {
+  border-color: rgba(248, 113, 113, 0.55);
+  background: rgba(248, 113, 113, 0.14);
+  color: var(--bad);
+}
+
+.home-right {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-wide,
+.chat-wide .chat-panel,
+.spa-chat-panel {
+  height: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+.spa-chat-panel {
+  background: var(--bg) !important;
+  border-left: 0 !important;
+}
+
+.spa-chat-panel .panel-head {
+  min-height: 41px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  flex-wrap: nowrap;
+}
+
+.spa-chat-panel .chat-tab {
+  height: 28px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  background: var(--btn);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.spa-chat-panel .chat-tab:hover,
+.spa-chat-panel .chat-tab.active {
+  background: var(--btn2);
+  color: var(--text);
+}
+
+.spa-chat-panel .chat-tab.active {
+  border-color: var(--accent);
+}
+
+.spa-chat-panel .stream-tab.active {
+  border-color: var(--ok);
+}
+
+.spa-chat-panel .tb-online-pill .mono {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 12px;
+  background: var(--btn);
+  color: var(--ok);
+}
+
+.spa-chat-panel .chatLog {
+  padding: 10px;
+  background: var(--bg);
+  border-bottom: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 13px;
+}
+
+.spa-chat-panel .chat-msg {
+  align-items: flex-start;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.spa-chat-panel .chat-avatar {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  margin: 2px 0 0;
+}
+
+.spa-chat-panel .chat-nick {
+  font-size: 13px;
+}
+
+.spa-chat-panel .chat-text {
+  color: var(--text);
+  font-size: 12px;
+}
+
+.spa-chat-panel .send-wrap {
+  padding: 8px;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+}
+
+.spa-chat-panel .send {
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.spa-chat-panel .send input {
+  margin: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+}
+
+.spa-chat-panel .send input:focus {
+  background: var(--btn);
+}
+
+.spa-chat-panel .send button {
+  width: auto;
+  min-width: 34px;
+  height: 34px;
+  margin: 0;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.spa-chat-panel .send button:hover {
+  background: var(--btn);
+  color: var(--text);
+}
+
+.spa-chat-panel .send button:last-child {
+  background: var(--accent);
+  color: #fff;
+}
+
+.spa-chat-panel .users-col {
+  width: 230px;
+  flex-basis: 230px;
+  background: var(--card);
+  border-left: 1px solid var(--border);
+}
+
+.spa-chat-panel .user-pill {
+  min-height: 31px;
+  padding: 5px 24px 5px 8px;
+  border-radius: 3px;
+  background: transparent;
+  font-size: 12px;
+}
+
+.spa-chat-panel .user-pill:hover {
+  background: var(--btn);
+}
+
+.voice-create-modal,
+.profile-modal-overlay,
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.voice-create-modal-card,
+.profile-modal-card,
+.admin-modal-card {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1001;
+  width: min(640px, calc(100vw - 32px));
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: translate(-50%, -50%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.admin-modal-card {
+  width: min(1180px, calc(100vw - 48px));
+  height: min(780px, calc(100vh - 64px));
+  max-height: calc(100vh - 64px);
+  padding-top: 0;
+  overflow: hidden;
+}
+
+.admin-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 3;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--btn);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.admin-modal-close:hover {
+  background: var(--btn2);
+  color: var(--text);
+}
+
+.admin-modal-card .spa-admin-panel {
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.admin-modal-card .spa-admin-panel .panel-head {
+  padding-right: 52px;
+}
+
+.admin-modal-card .admin-body {
+  min-height: 0;
+  overflow: auto;
+}
+
+.spa-admin-panel .admin-user-delete-icon {
+  width: 30px;
+  height: 28px;
+  min-width: 30px;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(248, 113, 113, 0.42);
+  border-radius: 3px;
+  background: rgba(127, 29, 29, 0.18);
+  color: var(--bad);
+}
+
+.spa-admin-panel .admin-user-delete-icon:hover {
+  background: rgba(220, 38, 38, 0.24);
+  border-color: rgba(248, 113, 113, 0.75);
+  color: #fff;
+}
+
+.spa-admin-panel .admin-user-delete-icon svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.voice-create-modal-card {
+  width: min(440px, calc(100vw - 32px));
+}
+
+.voice-create-modal-close {
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 20px;
+}
+
+.voice-create-modal-close:hover {
+  background: var(--btn);
+  color: var(--text);
+}
+
+@media (max-width: 600px) {
+  .profile-modal-overlay {
+    padding: 12px;
+    align-items: stretch;
+  }
+
+  .profile-modal-card {
+    max-height: 100%;
+    border-radius: 0;
+  }
 }

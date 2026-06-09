@@ -3,9 +3,9 @@ import { getAdminInstance } from "../../composables/useAdmin.js";
 
 const {
   adminUsers, adminLoading, adminStatus, adminError,
-  adminPasswords, adminResetLink,
+  adminPasswords, adminEmails, adminResetLink,
   loadAdminUsers, setAdminRole, setUserChatMute, resetAdminPassword,
-  generateAdminResetLink, copyAdminResetLink, deleteAdminUser,
+  generateAdminResetLink, copyAdminResetLink, updateUserEmail, deleteAdminUser,
 } = getAdminInstance();
 </script>
 
@@ -36,6 +36,16 @@ const {
             <span v-if="adminUser.chatMuted" class="admin-badge">mute</span>
           </div>
           <div class="admin-meta">{{ adminUser.createdAt || "—" }} • {{ adminUser.lastLoginAt || "—" }}</div>
+          <form class="admin-form" @submit.prevent="updateUserEmail(adminUser)">
+            <input
+              type="email"
+              :placeholder="adminUser.email || 'e-mail'"
+              :value="adminEmails[adminUser.id]"
+              @input="adminEmails[adminUser.id] = $event.target.value"
+              maxlength="255"
+            />
+            <button class="btn admin-reset-link-btn" type="submit">Сохранить</button>
+          </form>
         </div>
 
         <div class="admin-actions">
@@ -61,8 +71,20 @@ const {
             Восстановление
           </button>
 
-          <button class="btn admin-reset-link-btn" type="button" @click="deleteAdminUser(adminUser)">
-            Удалить
+          <button
+            class="btn admin-user-delete-icon"
+            type="button"
+            title="Удалить пользователя"
+            aria-label="Удалить пользователя"
+            @click="deleteAdminUser(adminUser)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 6h18" />
+              <path d="M8 6V4h8v2" />
+              <path d="M6 6l1 15h10l1-15" />
+              <path d="M10 10v7" />
+              <path d="M14 10v7" />
+            </svg>
           </button>
         </div>
       </div>

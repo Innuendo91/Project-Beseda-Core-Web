@@ -15,12 +15,13 @@ export function buildSessionUser(row) {
     id: Number(row.id),
     username,
     isAdmin: !!row.is_admin || getEnvAdmins().includes(username),
+    displayName: String(row.display_name || username),
   };
 }
 
 export async function authenticateCredentials(username, pass) {
   const { rows } = await pool.query(
-    "SELECT id, username, pass_hash, is_admin FROM users WHERE username=$1 LIMIT 1",
+    "SELECT id, username, display_name, pass_hash, is_admin FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1",
     [username]
   );
   const row = rows[0];
@@ -46,7 +47,7 @@ export async function loadUserProfile(sessionUser, { includeChatSounds = true } 
 
   try {
     const { rows } = await pool.query(
-      "SELECT display_name, nick_color, avatar, bio FROM users WHERE id=$1 LIMIT 1",
+      "SELECT display_name, nick_color, avatar, bio, email FROM users WHERE id=$1 LIMIT 1",
       [sessionUser.id]
     );
     const row = rows?.[0];
@@ -55,6 +56,7 @@ export async function loadUserProfile(sessionUser, { includeChatSounds = true } 
       user.nickColor = String(row.nick_color || "#60a5fa");
       user.avatar = String(row.avatar || "/public/usericon.jpg");
       user.bio = String(row.bio || "");
+      user.email = String(row.email || "");
     }
   } catch {
     // Keep the authenticated session user if profile enrichment fails.

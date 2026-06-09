@@ -82,7 +82,8 @@
 .tb-pill{
   padding:8px 10px;border:1px solid rgba(255,255,255,.12);
   background:rgba(42,36,32,.6);
-  color: var(--muted);font-size:12px;display:flex;gap:8px;align-items:center
+  color: var(--muted);font-size:12px;display:flex;gap:8px;align-items:center;
+  border-radius:3px
 }
 .tb-btn{
   min-width:auto;padding:7px 12px;

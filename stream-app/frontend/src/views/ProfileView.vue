@@ -1,5 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+
+const emit = defineEmits(["close"]);
 import { csrfFetch, getJson } from "../api.js";
 import { useStreams } from "../composables/useStreams.js";
 import AvatarCropModal from "../components/AvatarCropModal.vue";
@@ -8,10 +10,12 @@ import BrowserStreamModal from "../components/BrowserStreamModal.vue";
 const profileTab = ref("profile");
 
 const user = ref({
+  username: "",
   displayName: "",
   nickColor: "#60a5fa",
   bio: "",
   avatar: "",
+  email: "",
 });
 
 const profileStatus = ref("");
@@ -120,10 +124,12 @@ async function loadProfile() {
   try {
     const data = await getJson("/api/me");
     if (data.user) {
+      user.value.username = data.user.username || "";
       user.value.displayName = data.user.displayName || "";
       user.value.nickColor = data.user.nickColor || "#60a5fa";
       user.value.bio = data.user.bio || "";
       user.value.avatar = data.user.avatar || "";
+      user.value.email = data.user.email || "";
     }
   } catch {}
 }
@@ -420,6 +426,7 @@ onUnmounted(() => {
   <div class="panel profile-panel">
     <div class="panel-head">
       <div>Профиль</div>
+      <button type="button" class="panel-close" @click="emit('close')">&times;</button>
     </div>
 
     <div class="admin-tabs-bar" role="tablist">
@@ -446,6 +453,16 @@ onUnmounted(() => {
         </div>
 
         <div class="profile-fields">
+          <div class="profile-inline-fields">
+            <div class="field">
+              <label class="field-label">Ваш логин</label>
+              <input class="box" type="text" :value="user.username" readonly />
+            </div>
+            <div class="field">
+              <label class="field-label">Email</label>
+              <input class="box" type="email" :value="user.email" readonly placeholder="your@email.com" />
+            </div>
+          </div>
           <div class="field">
             <label class="field-label">Отображаемое имя</label>
             <input class="box" type="text" v-model="user.displayName" placeholder="Ваше имя" maxlength="64" />
@@ -730,6 +747,32 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 12px;
 }
+.profile-inline-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.panel-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  width: auto !important;
+  margin-top: 0 !important;
+  min-width: 24px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.panel-close:hover {
+  color: var(--text);
+}
+:deep(.panel-head) {
+  align-items: center;
+  flex-wrap: nowrap;
+}
 .field {
   display: flex;
   flex-direction: column;
@@ -750,6 +793,10 @@ onUnmounted(() => {
 }
 .box:focus {
   border-color: rgba(255,255,255,.25);
+}
+.box[readonly] {
+  opacity: 0.5;
+  cursor: default;
 }
 .box-color {
   width: 60px;

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ============================================================
-#  Stream.ShadeCraft.ru — Installer
+#  Project Beseda — Installer
 #  Генерирует секреты, создаёт .env, настраивает MediaMTX
 # ============================================================
 
@@ -39,7 +39,7 @@ cd "$SCRIPT_DIR"
 # --- Ввод домена ---
 echo
 info "Введите домен сайта (без http/https, без порта)"
-info "Пример: stream.shadecraft.ru"
+info "Пример: twitchcord.ru"
 read -rp "  Домен: " DOMAIN
 [[ -z "$DOMAIN" ]] && fail "Домен не может быть пустым."
 
@@ -49,12 +49,12 @@ CLEANED="${DOMAIN//[^.]}"
 if [[ ${#CLEANED} -ge 2 ]]; then
   SERVER_NAME="${DOMAIN}"
   CERTBOT_DOMAINS="${DOMAIN}"
-  HTTP_HOST_CHECK="if (\$host = ${DOMAIN}) { return 301 https://\$host\$request_uri; } # managed by Certbot"
+  HTTP_HOST_CHECK="if (\$host = ${DOMAIN}) { return 301 https://\$host\$request_uri; }"
 else
   SERVER_NAME="${DOMAIN} www.${DOMAIN}"
   CERTBOT_DOMAINS="${DOMAIN} www.${DOMAIN}"
-  HTTP_HOST_CHECK="if (\$host = ${DOMAIN}) { return 301 https://\$host\$request_uri; } # managed by Certbot
-    if (\$host = www.${DOMAIN}) { return 301 https://\$host\$request_uri; } # managed by Certbot"
+  HTTP_HOST_CHECK="if (\$host = ${DOMAIN}) { return 301 https://\$host\$request_uri; }
+    if (\$host = www.${DOMAIN}) { return 301 https://\$host\$request_uri; }"
 fi
 cat > /etc/nginx/sites-available/${DOMAIN} <<EOF
 server {
@@ -64,11 +64,6 @@ server {
 #        return 301 https://\$host\$request_uri;
 #    }
 
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
     location / {
         proxy_pass http://127.0.0.1:8085;
@@ -110,7 +105,7 @@ server {
 
     listen 80;
     server_name ${SERVER_NAME};
-    return 404; # managed by Certbot
+    return 404;
 }
 EOF
 ln -sf /etc/nginx/sites-available/${DOMAIN} /etc/nginx/sites-enabled/${DOMAIN}
@@ -378,7 +373,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   mediamtx:
-    image: bluenviron/mediamtx:1
+    image: bluenviron/mediamtx:1.18.1
     restart: unless-stopped
     volumes:
       - ./mediamtx/mediamtx.yml:/mediamtx.yml:ro
@@ -430,8 +425,6 @@ echo -e "  3. Запустите: ${CYAN}docker compose up -d --build${NC}"
 echo
 echo -e "  ${YELLOW}Важно:${NC} Откройте UDP порты 40000-40100, 8189, 8888-8890 на фаерволе."
 echo
-echo -e "  ${CYAN}Получите сертификат:${NC} certbot --nginx -d ${CERTBOT_DOMAINS}"
-echo
 
 # --- Запуск? ---
 echo -ne "${CYAN}Запустить docker compose сейчас? (y/N): ${NC}"
@@ -445,3 +438,7 @@ if [[ "$START_NOW" =~ ^[Yy]$ ]]; then
   info "Логи: docker compose logs -f"
   info "Админ создан при первом запуске stream-app (ADMIN_BOOTSTRAP_USER)"
 fi
+
+echo
+echo -e "  ${YELLOW}Получите сертификат: certbot --nginx -d ${CERTBOT_DOMAINS}${NC}"
+echo

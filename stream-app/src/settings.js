@@ -141,3 +141,7 @@ export function getVoiceJoinSound() {
 export function getVoiceLeaveSound() {
   return getSettings().voiceLeaveSound || "";
 }
+
+export function getBaseUrl() {
+  return process.env.BASE_URL || "";
+}

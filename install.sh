@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ============================================================
-#  Stream.ShadeCraft.ru — Installer
+#  Project Beseda — Installer
 #  Генерирует секреты, создаёт .env, настраивает MediaMTX
 # ============================================================
 
@@ -34,7 +34,7 @@ cd "$SCRIPT_DIR"
 # --- Ввод домена ---
 echo
 info "Введите домен сайта (без http/https, без порта)"
-info "Пример: stream.shadecraft.ru"
+info "Пример: twitchcord.ru"
 read -rp "  Домен: " DOMAIN
 [[ -z "$DOMAIN" ]] && fail "Домен не может быть пустым."
 

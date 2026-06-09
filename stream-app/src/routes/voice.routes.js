@@ -256,6 +256,7 @@ router.post("/token", requireAuthApi, async (req, res) => {
       {
         sub: `user:${req.session.user.id}`,
         username: req.session.user.username,
+        displayName: String(req.session.user.displayName || ""),
         roomSlug: room.slug,
         isPermanent: !!room.is_permanent
       },
@@ -385,6 +386,7 @@ desktopRouter.post("/token", requireAuthApi, async (req, res) => {
       {
         sub: `user:${req.session.user.id}`,
         username: req.session.user.username,
+        displayName: String(req.session.user.displayName || ""),
         roomSlug: room.slug,
         isPermanent: !!room.is_permanent
       },

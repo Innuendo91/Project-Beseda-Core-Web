@@ -22,7 +22,7 @@
     .tb-logo{width:48px;height:48px;border-radius:8px;margin-bottom:12px}
     .auth-title{font-size:18px;font-weight:700;margin-bottom:4px;color:#e8e6e3}
     .auth-sub{font-size:14px;color:#8b8d94;margin-bottom:16px}
-    .auth-card input[type="text"],.auth-card input[type="password"]{width:100%;padding:10px 12px;margin-bottom:8px;border:1px solid #2a2d37;border-radius:4px;background:#0d0f13;color:#e8e6e3;font-size:14px;outline:none}
+    .auth-card input[type="text"],.auth-card input[type="password"],.auth-card input[type="email"]{width:100%;padding:10px 12px;margin-bottom:8px;border:1px solid #2a2d37;border-radius:4px;background:#0d0f13;color:#e8e6e3;font-size:14px;outline:none}
     .auth-card input:focus{border-color:#60a5fa}
     .auth-card button{width:100%;padding:10px;border:none;border-radius:4px;background:#3b82f6;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px}
     .auth-card button:hover{background:#2563eb}
@@ -30,6 +30,7 @@
     .sub{font-size:13px;color:#8b8d94;margin-top:12px}
     .sub a{color:#60a5fa;text-decoration:none}
     .sub a:hover{text-decoration:underline}
+    .field-note{font-size:11px;color:#555;text-align:left;margin-top:-4px;margin-bottom:6px}
   </style>
 </head>
 <body>
@@ -46,6 +47,8 @@
           <input type="text" name="username" placeholder="Логин (он же ник)" autocomplete="username" value="<%= safeUser %>" />
           <input name="pass" type="password" placeholder="Пароль" autocomplete="new-password" />
           <input name="pass2" type="password" placeholder="Повтор пароля" autocomplete="new-password" />
+          <input type="email" name="email" placeholder="Email" autocomplete="email" />
+          <div class="field-note">Используется только для восстановления пароля</div>
           <input type="text" name="code" placeholder="Кодовое слово" />
           <button type="submit">Создать аккаунт</button>
         </form>

@@ -10,8 +10,8 @@ export function useStreams() {
   const streamCopyStatus = ref("");
   const streamLoadError = ref("");
 
-  async function refresh() {
-    loading.value = true;
+  async function refresh({ quiet } = {}) {
+    if (!quiet) loading.value = true;
     status.value = "";
     try {
       const streamData = await getJson("/api/streams");
@@ -24,7 +24,7 @@ export function useStreams() {
       }
       status.value = "Не удалось обновить данные";
     } finally {
-      loading.value = false;
+      if (!quiet) loading.value = false;
     }
   }
 

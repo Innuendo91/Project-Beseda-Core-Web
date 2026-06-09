@@ -1,8 +1,9 @@
 export class Peer {
-  constructor({ peerId, userId, username, ws, room }) {
+  constructor({ peerId, userId, username, displayName, ws, room }) {
     this.peerId = peerId;
     this.userId = userId;
     this.username = username;
+    this.displayName = displayName || "";
     this.ws = ws;
     this.room = room;
 

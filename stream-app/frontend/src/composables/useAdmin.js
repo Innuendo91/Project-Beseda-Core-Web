@@ -15,6 +15,7 @@ export function useAdmin() {
   const adminStatus = ref("");
   const adminError = ref("");
   const adminPasswords = ref({});
+  const adminEmails = ref({});
   const adminResetLink = ref(null);
   const adminSettings = ref({
     siteName: "",
@@ -260,6 +261,25 @@ export function useAdmin() {
       adminStatus.value = "Ссылка скопирована";
     } catch {
       adminError.value = "Не удалось скопировать ссылку";
+    }
+  }
+
+  async function updateUserEmail(adminUser) {
+    if (!adminUser?.id) return;
+    const email = String(adminEmails.value[adminUser.id] || "").trim().toLowerCase();
+
+    adminError.value = "";
+    adminStatus.value = "";
+    try {
+      await getJson(`/api/admin/users/${adminUser.id}/email`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      adminStatus.value = `E-mail обновлён: ${adminUser.username}`;
+      await loadAdminUsers();
+    } catch (err) {
+      adminError.value = err.message || "Не удалось обновить e-mail";
     }
   }
 
@@ -613,6 +633,7 @@ export function useAdmin() {
     adminStatus,
     adminError,
     adminPasswords,
+    adminEmails,
     adminResetLink,
     adminSettings,
     adminChatRooms,
@@ -651,6 +672,7 @@ export function useAdmin() {
     resetAdminPassword,
     generateAdminResetLink,
     copyAdminResetLink,
+    updateUserEmail,
     deleteAdminUser,
     createAdminChatRoom,
     deleteAdminChatRoom,

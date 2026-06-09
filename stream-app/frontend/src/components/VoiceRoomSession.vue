@@ -50,6 +50,7 @@ let noiseSuppression = true;
 let echoCancellation = true;
 let preferredDeviceId = "";
 const selfLabel = ref("");
+const selfName = ref("");
 
 function esc(s) {
   return String(s || "").replace(/[&<>"']/g, (c) => ({
@@ -63,8 +64,8 @@ function setStatus(msg) {
 
 function renderMembers() {
   const list = [...membersMap.entries()]
-    .map(([peerId, data]) => ({ peerId, username: data?.username || "user" }))
-    .sort((a, b) => a.username.localeCompare(b.username, "ru"));
+    .map(([peerId, data]) => ({ peerId, name: data?.displayName || data?.username || "user", username: data?.username || "user" }))
+    .sort((a, b) => a.name.localeCompare(b.name, "ru"));
   members.value = list;
   updateSelfSpeaking();
 }
@@ -146,6 +147,7 @@ async function loadVoiceSettings() {
     if (r.ok) {
       const data = await r.json();
       selfLabel.value = data.user?.username || "";
+      selfName.value = data.user?.displayName || data.user?.username || "";
     }
   } catch {}
 }
@@ -401,7 +403,7 @@ async function init() {
       membersMap.clear();
       if (Array.isArray(data?.peers)) {
         for (const p of data.peers) {
-          membersMap.set(p.peerId, { username: p.username || "user" });
+          membersMap.set(p.peerId, { username: p.username || "user", displayName: p.displayName || "" });
           for (const producerId of p?.producers || []) {
             pendingProducers.add(producerId);
             producerPeerMap.set(producerId, p.peerId);
@@ -410,7 +412,7 @@ async function init() {
         const hasSelf = selfLabel.value && [...membersMap.values()].some(
           (m) => String(m.username || "").toLowerCase() === selfLabel.value.toLowerCase()
         );
-        if (!hasSelf) membersMap.set(selfPeerId || "self", { username: selfLabel.value || "вы" });
+        if (!hasSelf) membersMap.set(selfPeerId || "self", { username: selfLabel.value || "вы", displayName: selfName.value || "" });
         renderMembers();
       }
       wsSend(ws, "getRouterRtpCapabilities", {});
@@ -418,7 +420,7 @@ async function init() {
     }
 
     if (type === "peerJoined") {
-      membersMap.set(data?.peerId, { username: data?.username || "user" });
+      membersMap.set(data?.peerId, { username: data?.username || "user", displayName: data?.displayName || "" });
       renderMembers();
       playVoiceSound(voiceJoinSoundUrl);
       return;
@@ -597,7 +599,7 @@ onUnmounted(() => {
           }"
           :data-peer="m.peerId"
         >
-          <span class="voice-session-pill-name">{{ m.username }}</span>
+          <span class="voice-session-pill-name">{{ m.name }}</span>
         </div>
       </template>
     </div>

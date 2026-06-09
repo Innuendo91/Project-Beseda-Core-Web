@@ -10,7 +10,6 @@ import {
   incPresence,
   decPresence,
   presenceSnapshotForRoom,
-  broadcastPresence,
 } from "./ws-chat-shared.js";
 
 const DEFAULT_MSG_LIMIT = 50;
@@ -198,31 +197,37 @@ export function attachChatWss(httpServer, sessionParser) {
 
     console.log("[ws-chat] new connection:", ws.user.username, "room:", ws.room);
     incPresence(ws);
-    broadcastPresence(ws.room);
 
     // init messages for room
     try {
       const limit = await getRoomLimit(ws.room);
-      const { rows } = await pool.query(
-       `SELECT m.id, m.ts, m.nick, m.text, m.sticker_data, m.image_data, u.nick_color, u.avatar, u.display_name, u.bio
-          FROM messages m
-          LEFT JOIN users u ON m.nick = u.username
-          WHERE m.room=$1 ORDER BY m.id DESC LIMIT $2`,
+       const { rows } = await pool.query(
+        `SELECT m.id, m.ts, m.nick, m.text, m.sticker_data, m.image_data,
+                u.nick_color, u.avatar, u.display_name, u.bio
+         FROM messages m
+         LEFT JOIN users u ON u.username = m.nick
+         WHERE m.room=$1 ORDER BY m.id DESC LIMIT $2`,
         [ws.room, limit]
       );
       const snap = presenceSnapshotForRoom(ws.room);
       const msgs = rows.reverse().map(r => ({
-         id: Number(r.id),
-         ts: r.ts,
-         nick: r.nick,
-         text: r.text,
-         stickerData: r.sticker_data || '',
-         imageData: r.image_data || '',
-         nickColor: r.nick_color || '#60a5fa',
-         avatar: r.avatar || '',
-         displayName: String(r.display_name || ''),
-         bio: String(r.bio || '')
-       }));
+        id: Number(r.id),
+        ts: r.ts,
+        nick: r.nick,
+        text: r.text,
+        stickerData: r.sticker_data || '',
+        imageData: r.image_data || '',
+        nickColor: r.nick_color || '#60a5fa',
+        avatar: r.avatar || '',
+        displayName: String(r.display_name || ''),
+        bio: String(r.bio || ''),
+        sender: {
+          username: r.nick,
+          displayName: String(r.display_name || ''),
+          avatar: r.avatar || '',
+          nickColor: r.nick_color || '#60a5fa',
+        },
+      }));
       safeJsonSend(ws, { type: "init", messages: msgs, ...snap });
       console.log("[ws-chat] init sent:", rows.length, "messages");
     } catch (err) {
@@ -232,10 +237,8 @@ export function attachChatWss(httpServer, sessionParser) {
     }
 
     ws.on("close", () => {
-      const room = ws.room || "global";
       unregisterClient(ws);
       decPresence(ws);
-      broadcastPresence(room);
     });
 
     ws.on("message", async (buf) => {

@@ -1,5 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { requireAuth, requireAuthApi, isAdminUser } from "../auth.js";
 import { issueMtxJwtNoExp, issueWhepJwt } from "../whep-jwt.js";
 import { verifyDesktopToken } from "../desktop-auth.js";
@@ -8,6 +9,8 @@ import sharp from "sharp";
 import { loadSettings, getSrtPassphrase, getSrtPbkeylen } from "../settings.js";
 import { loadVoiceSettings } from "../voice-settings.js";
 import { getDesktopRemotePlayAccess, setDesktopRemotePlayInvite } from "../ws-desktop-remote-play.js";
+import { sendPasswordResetEmail } from "../email-service.js";
+import { checkBruteForce } from "../bruteforce.js";
 
 export const pagesRouter = express.Router();
 
@@ -105,6 +108,7 @@ pagesRouter.get("/api/desktop/whep-config/:path(*)", (req, res) => {
     protocol,
     streamHost,
     whepPort,
+    useProxy: false,
     token,
   });
 });
@@ -479,6 +483,77 @@ pagesRouter.get("/api/users", requireAuthApi, async (req, res) => {
     }))});
   } catch {
     return res.status(500).json({ ok: false });
+  }
+});
+
+// --- Forgot password: request reset link via email ---
+pagesRouter.get("/forgot-password", async (req, res) => {
+  if (req.session?.user) return res.redirect("/");
+  const settings = await loadSettings();
+  return res.render("forgot-password", { error: "", ok: "", username: "", siteName: settings.siteName });
+});
+
+pagesRouter.post("/forgot-password", async (req, res) => {
+  if (req.session?.user) return res.redirect("/");
+
+  const username = String(req.body?.username ?? "").trim().toLowerCase();
+  const settings = await loadSettings();
+
+  if (!username) {
+    return res.render("forgot-password", { error: "Введите логин", username: "", siteName: settings.siteName });
+  }
+
+  const bf = await checkBruteForce(req, "forgot-password");
+  if (bf.blocked) {
+    const mins = Math.ceil(bf.retryAfter / 60);
+    return res.render("forgot-password", {
+      error: `Слишком много попыток. Попробуйте через ${mins} мин.`,
+      username,
+      siteName: settings.siteName,
+    });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      "SELECT id, email, username FROM users WHERE username = $1 LIMIT 1",
+      [username]
+    );
+
+    if (!rows.length) {
+      bf.record(username, false);
+    } else {
+      const user = rows[0];
+      const email = String(user.email || "").trim();
+
+      if (email) {
+        const token = crypto.randomBytes(32).toString("hex");
+        const ts = Math.floor(Date.now() / 1000);
+        const expires = ts + 86400;
+
+        await pool.query(
+          "INSERT INTO password_resets(user_id, token, expires_ts, created_ts) VALUES ($1,$2,$3,$4)",
+          [user.id, token, expires, ts]
+        ).catch(() => {});
+
+        await sendPasswordResetEmail(email, user.username, token);
+        bf.record(username, true);
+      } else {
+        bf.record(username, false);
+      }
+    }
+
+    return res.render("forgot-password", {
+      error: "",
+      ok: "Если аккаунт с таким логином существует, мы отправили ссылку для сброса пароля на привязанный email.",
+      username: "",
+      siteName: settings.siteName,
+    });
+  } catch {
+    return res.render("forgot-password", {
+      error: "Ошибка сервера",
+      username,
+      siteName: settings.siteName,
+    });
   }
 });
 

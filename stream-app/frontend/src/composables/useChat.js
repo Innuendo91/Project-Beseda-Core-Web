@@ -92,6 +92,7 @@ export function useChat() {
   const chatNotifySound = ref(true);
   const chatMentionSound = ref(true);
   let _currentUsername = "";
+  let _currentDisplayName = "";
   let _currentActiveRoom = "global";
   let _notifSoundRef = null;
 
@@ -110,8 +111,22 @@ export function useChat() {
     });
   }
 
+  function uniqueMessages(messages) {
+    const seen = new Set();
+    return (messages || [])
+      .filter((message) => {
+        const id = Number(message?.id || 0);
+        const key = id
+          ? `id:${id}`
+          : `fallback:${message?.nick || ""}:${message?.ts || ""}:${message?.text || ""}:${message?.stickerData || ""}:${message?.imageData || ""}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+  }
+
   function pushChatMessages(room, messages) {
-    const list = [...(chatMessages.value[room] || []), ...messages].slice(-400);
+    const list = uniqueMessages([...(chatMessages.value[room] || []), ...messages]).slice(-400);
     chatMessages.value = { ...chatMessages.value, [room]: list };
   }
 
@@ -134,7 +149,7 @@ export function useChat() {
       }
 
       if (data.type === "init") {
-        chatMessages.value = { ...chatMessages.value, [room]: Array.isArray(data.messages) ? data.messages : [] };
+        chatMessages.value = { ...chatMessages.value, [room]: uniqueMessages(Array.isArray(data.messages) ? data.messages : []) };
         scrollChatBottom();
         chatOnlineUsers.value = Array.isArray(data.onlineUsers) ? data.onlineUsers : [];
         chatOnlineCount.value = Number(data.onlineCount || 0);
@@ -159,7 +174,7 @@ export function useChat() {
               connectChatRoom(msgRoom);
             }
           }
-          const isMention = checkMention(data.message, _currentUsername);
+          const isMention = checkMention(data.message, _currentDisplayName);
           if (!ownMsg && msgRoom !== _currentActiveRoom) {
             chatUnread.value = { ...chatUnread.value, [msgRoom]: (chatUnread.value[msgRoom] || 0) + 1 };
             if (chatMentionSound.value && isMention) {
@@ -192,8 +207,8 @@ export function useChat() {
       }
 
       if (data.type === "presence") {
-        chatOnlineUsers.value = Array.isArray(data.onlineUsers) ? data.onlineUsers : [];
-        chatOnlineCount.value = Number(data.onlineCount || 0);
+        chatOnlineUsers.value = Array.isArray(data.roomUsers) ? data.roomUsers : [];
+        chatOnlineCount.value = Number(data.roomCount || data.onlineCount || 0);
       }
 
       if (data.type === "error") {
@@ -340,8 +355,9 @@ export function useChat() {
     } catch {}
   }
 
-  async function loadChatNotifSettings(username) {
+  async function loadChatNotifSettings(username, displayName) {
     _currentUsername = username || "";
+    _currentDisplayName = displayName || "";
     try {
       const data = await getJson("/api/desktop/voice-settings");
       if (data.ok && data.data) {
