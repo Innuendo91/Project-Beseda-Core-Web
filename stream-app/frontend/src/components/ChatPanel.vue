@@ -564,6 +564,7 @@ function resolveUser(nick) {
                 ref="userPillRows"
                 :data-username="user.username"
                 class="user-pill-row"
+                :class="{ 'user-pill-row--online': onlineUsernames.has(user.username) }"
                 @click.stop="toggleUserMenu(user, $event)"
               >
                 <div class="user-pill">
@@ -670,6 +671,10 @@ function resolveUser(nick) {
 
 .chat-split {
   position: relative;
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .chat-image {
@@ -1000,5 +1005,143 @@ function resolveUser(nick) {
 
 .user-dropdown-item:hover svg {
   opacity: 1;
+}
+
+@media (max-width: 760px) {
+  .chat-wide,
+  .chat-panel {
+    min-height: 0;
+  }
+
+  .chat-split {
+    flex-direction: column;
+  }
+
+  .chat-col {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stream-video-col {
+    flex: 0 0 auto;
+    min-height: 180px;
+    max-height: 42dvh;
+    border-bottom: 1px solid var(--border, rgba(255,255,255,0.08));
+  }
+
+  .stream-player-wrap {
+    aspect-ratio: 16 / 9;
+    min-height: 180px;
+    max-height: 42dvh;
+  }
+
+  .stream-chat-col {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    border-left: 0;
+  }
+
+  .stream-chat-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 8px;
+  }
+
+  .stream-chat-header .mono {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chat-image {
+    max-width: min(70vw, 260px);
+    max-height: 180px;
+  }
+
+  .chat-delete-btn {
+    opacity: 1;
+  }
+
+  .drop-zone-overlay {
+    border-width: 2px;
+    border-radius: 0;
+    font-size: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .image-preview-overlay {
+    padding: 12px;
+  }
+
+  .image-preview-close {
+    top: 10px;
+    right: 12px;
+  }
+
+  .image-preview-img {
+    max-width: 96vw;
+    max-height: 82dvh;
+  }
+
+  .user-profile-overlay {
+    align-items: stretch;
+    padding: 12px;
+  }
+
+  .user-profile-card {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    justify-content: center;
+    padding: 28px 20px;
+    border-radius: 8px;
+  }
+
+  .user-profile-bio {
+    max-width: 100%;
+  }
+
+  .user-dropdown-fixed {
+    left: 8px !important;
+    right: 8px;
+    top: auto !important;
+    bottom: 12px;
+    width: auto;
+    min-width: 0;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 420px) {
+  .stream-video-col,
+  .stream-player-wrap {
+    min-height: 160px;
+    max-height: 36dvh;
+  }
+
+  .stream-chat-header {
+    font-size: 12px;
+  }
+
+  .chat-image {
+    max-width: 78vw;
+    max-height: 160px;
+  }
+
+  .user-profile-overlay {
+    padding: 0;
+  }
+
+  .user-profile-card {
+    min-height: 100%;
+    border-radius: 0;
+  }
 }
 </style>

@@ -48,6 +48,7 @@ const currentUser = ref(window.__APP__?.user || null);
 const rooms = ref([]);
 const activeChatRoom = ref("global");
 const activeStream = ref(null);
+const mobileSourceTab = ref("");
 const browserStreamer = ref(null);
 const browserStreaming = ref(false);
 const browserStreamModal = ref(false);
@@ -255,7 +256,26 @@ onUnmounted(() => {
 
     <div class="home-split spa-home">
       <aside class="home-left streams-panel-web">
-        <section class="streams-body panel-section-web">
+        <div class="mobile-source-tabs" role="tablist" aria-label="Навигация по спискам">
+          <button
+            type="button"
+            class="mobile-source-tab"
+            :class="{ active: mobileSourceTab === 'streams' }"
+            @click="mobileSourceTab = mobileSourceTab === 'streams' ? '' : 'streams'"
+          >
+            Стримы
+          </button>
+          <button
+            type="button"
+            class="mobile-source-tab"
+            :class="{ active: mobileSourceTab === 'voice' }"
+            @click="mobileSourceTab = mobileSourceTab === 'voice' ? '' : 'voice'"
+          >
+            Голосовые
+          </button>
+        </div>
+
+        <section class="streams-body panel-section-web" :class="{ 'is-mobile-active': mobileSourceTab === 'streams' }">
           <StreamList
             :streams="streams"
             :loading="loading"
@@ -267,7 +287,7 @@ onUnmounted(() => {
           <div v-if="browserStreamStatus" class="spa-browser-status">{{ browserStreamStatus }}</div>
         </section>
 
-        <section class="voice-body panel-section-web">
+        <section class="voice-body panel-section-web" :class="{ 'is-mobile-active': mobileSourceTab === 'voice' }">
           <VoiceRoomList
             :voice-rooms="voiceRooms"
             :voice-loading="voiceLoading"
