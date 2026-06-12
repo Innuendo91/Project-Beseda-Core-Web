@@ -300,10 +300,23 @@ adminRouter.delete("/api/admin/chat-rooms/:id", requireAdmin, async (req, res) =
   const id = Number(req.params.id || 0);
   if (!id) return res.status(400).json({ ok: false, error: "id required" });
   try {
-    const { rows } = await pool.query("SELECT is_permanent FROM chat_rooms WHERE id=$1", [id]);
+    const { rows } = await pool.query("SELECT slug, is_permanent FROM chat_rooms WHERE id=$1", [id]);
     if (!rows.length) return res.status(404).json({ ok: false, error: "not found" });
     if (rows[0].is_permanent) return res.status(403).json({ ok: false, error: "permanent room cannot be deleted" });
-    await pool.query("DELETE FROM chat_rooms WHERE id=$1", [id]);
+
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query("DELETE FROM messages WHERE room=$1", [rows[0].slug]);
+      await client.query("DELETE FROM chat_rooms WHERE id=$1", [id]);
+      await client.query("COMMIT");
+    } catch (err) {
+      try { await client.query("ROLLBACK"); } catch {}
+      throw err;
+    } finally {
+      client.release();
+    }
+
     return res.json({ ok: true });
   } catch {
     return res.status(500).json({ ok: false });
