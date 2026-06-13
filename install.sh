@@ -154,6 +154,12 @@ VOICE_SERVER_SECRET=${VOICE_SERVER_SECRET}
 
 # Base URL (for emails, redirects, etc.)
 BASE_URL=https://${DOMAIN}
+
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
 EOF
 ok "stream-app/.env создан"
 
