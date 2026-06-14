@@ -69,22 +69,26 @@ Desktop-клиент находится в отдельном проекте `Pr
 ## Быстрый запуск
 
 Полная установка на чистый VDS-сервер с установкой системных зависимостей:
-
+===================
 Debian
 ```bash
 apt update
 apt install git
 git clone https://github.com/Innuendo91/Project-Beseda-Core-Web
-cd Project-Beseda-Core_web
+cd Project-Beseda-Core-Web
 chmod +x install_full_debian.sh
 ./install_full_debian.sh
 ```
 Ubuntu
 ```bash
+apt update
+apt install git
+git clone https://github.com/Innuendo91/Project-Beseda-Core-Web
+cd Project-Beseda-Core-Web
 chmod +x install_full_ubuntu.sh
 ./install_full_ubuntu.sh
 ```
-
+=================
 Обычный запуск, если Docker и зависимости уже установлены:
 
 ```bash
