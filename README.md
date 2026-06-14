@@ -70,9 +70,19 @@ Desktop-клиент находится в отдельном проекте `Pr
 
 Полная установка на чистый VDS-сервер с установкой системных зависимостей:
 
+Debian
 ```bash
-chmod +x install_full.sh
-./install_full.sh
+apt update
+apt install git
+git clone https://github.com/Innuendo91/Project-Beseda-Core-Web
+cd Project-Beseda-Core_web
+chmod +x install_full_debian.sh
+./install_full_debian.sh
+```
+Ubuntu
+```bash
+chmod +x install_full_ubuntu.sh
+./install_full_ubuntu.sh
 ```
 
 Обычный запуск, если Docker и зависимости уже установлены:
