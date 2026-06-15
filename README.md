@@ -106,6 +106,16 @@ docker compose logs -f voice-server
 docker compose logs -f mediamtx
 ```
 
+## Настройка сервера почты для восстановления паролей
+```text
+- `stream-app/.env` 
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
+```text
+
 ## Основные env-файлы
 
 - `.env` - переменные Docker Compose;
