@@ -114,7 +114,7 @@ SMTP_PORT=
 SMTP_USER=
 SMTP_PASS=
 SMTP_FROM=
-```text
+```
 
 ## Основные env-файлы
 
